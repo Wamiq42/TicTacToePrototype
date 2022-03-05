@@ -8,6 +8,7 @@ public class CellGrids : Matrices
     bool columnSame = false;
     bool diagnolSame = false;
     bool matchDraw = false;
+    bool gameFinished = false;
     List<List<Cell>> cell2dList;
     Cell.Status currentTurn = Cell.Status.cross;
 
@@ -40,40 +41,51 @@ public class CellGrids : Matrices
 
     public void setStatusWithPosition(int rows,int column)
     {
-
-        if(cell2dList[rows][column].GetStatus() == Cell.Status.none)
+        if (!gameFinished)
         {
-            if (!checkWin)
+            if (cell2dList[rows][column].GetStatus() == Cell.Status.none)
             {
-                CheckDraw();
-                if ((int)currentTurn == (int)Cell.Status.cross && !matchDraw)
+                if (!checkWin)
                 {
-                    setElementsInMatrix(rows, column, (int)Cell.Status.circle);
-                    cell2dList[rows][column].SetStatus(Cell.Status.circle);
-                    Debug.Log(cell2dList[rows][column].GetStatus());
-                    currentTurn = Cell.Status.circle;
-                    CheckWin();
+                    CheckDraw();
+                    if ((int)currentTurn == (int)Cell.Status.cross && !matchDraw)
+                    {
+                        setElementsInMatrix(rows, column, (int)Cell.Status.circle);
+                        cell2dList[rows][column].SetStatus(Cell.Status.circle);
+                        Debug.Log(cell2dList[rows][column].GetStatus());
+                        currentTurn = Cell.Status.circle;
+                        CheckWin();
+                    }
+                    else if ((int)currentTurn == (int)Cell.Status.circle && !matchDraw)
+                    {
+                        setElementsInMatrix(rows, column, (int)Cell.Status.cross);
+                        cell2dList[rows][column].SetStatus(Cell.Status.cross);
+                        Debug.Log(cell2dList[rows][column].GetStatus());
+                        currentTurn = Cell.Status.cross;
+                        CheckWin();
+                    }
                 }
-                else if ((int)currentTurn == (int)Cell.Status.circle && !matchDraw)
+                else if (checkWin)
                 {
-                    setElementsInMatrix(rows, column, (int)Cell.Status.cross);
-                    cell2dList[rows][column].SetStatus(Cell.Status.cross);
-                    Debug.Log(cell2dList[rows][column].GetStatus());
-                    currentTurn = Cell.Status.cross;
-                    CheckWin();
+
+                    if ((int)currentTurn == (int)Cell.Status.circle)
+                    {
+                        Debug.Log("Circle Won!");
+                        CheckWin();
+                        gameFinished = true;
+                    }
+                    else if ((int)currentTurn == (int)Cell.Status.cross)
+                    {
+                        Debug.Log("Cross Won!");
+                        CheckWin();
+                        gameFinished = true;
+                    }
+
                 }
             }
-            else if (checkWin)
-            {
-                if ((int)currentTurn == (int)Cell.Status.circle)
-                    Debug.Log("Circle Won!");
-                else if ((int)currentTurn == (int)Cell.Status.cross)
-                    Debug.Log("Cross Won!");
-            }
+
         }
-       
-     
-           
+      
     }
 
     public void CheckWin()
@@ -85,6 +97,8 @@ public class CellGrids : Matrices
             if(rowSame == true)
             {
                 checkWin = true;
+                setRow(i, (int)Cell.Status.tick);
+                onMatrixUpdate();
                 break;
             }
             else
@@ -100,6 +114,8 @@ public class CellGrids : Matrices
                 if(columnSame)
                 {
                     checkWin = true;
+                    setColumn(i, (int)Cell.Status.tick);
+                    onMatrixUpdate();
                     break;
                 }
                 else
@@ -109,16 +125,15 @@ public class CellGrids : Matrices
             }
         }
 
-        else if(!checkWin && !columnSame)
-        {
             diagnolSame = CheckDiagnolMatrix();
             if (diagnolSame)
             {
                 checkWin = true;
+                setDiagnolMatrix((int)Cell.Status.tick);    
+                onMatrixUpdate();
             }
             else
                 checkWin = false;
-        }
         
     }
    
@@ -152,18 +167,18 @@ public class CellGrids : Matrices
             }
         }
     }
-  
 
-    //public override void onMatrixUpdate()
-    //{
-    //    for (int i = 0; i < rows; i++)
-    //    {
-    //        for (int j = 0; j < columns; j++)
-    //        {
-    //            cell2dList[i][j].nextStatus((Cell.Status)getElementInMatrix(i, j));
-    //        }
-    //    }
-    //}
+
+    public void onMatrixUpdate()
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                cell2dList[i][j].SetStatus((Cell.Status)getElementInMatrix(i, j));
+            }
+        }
+    }
 
 
 }

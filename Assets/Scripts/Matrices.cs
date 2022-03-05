@@ -166,6 +166,21 @@ public class Matrices
         }
     }
 
+    public void setRow(int row, int num)
+    {
+        for (int i = 0; i < columns; i++)
+        {
+            matrix[row][i] = num;
+        }
+    }
+
+    public void setColumn(int col, int num)
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            matrix[i][col] = num;
+        }
+    }
     public void setDiagnolMatrix(int num)
     {
 
@@ -332,8 +347,8 @@ public class Matrices
 
     }
 
-    public virtual void onMatrixUpdate()
-    {
+    //public virtual void onMatrixUpdate()
+    //{
 
-    }
+    //}
 }
